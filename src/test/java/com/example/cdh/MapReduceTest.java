@@ -4,7 +4,11 @@ import com.example.cdh.service.HdfsService;
 import com.example.cdh.service.mapreduce.WordCountJob;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,9 @@ public class MapReduceTest {
     private HdfsService hdfsService;
     @Autowired
     private WordCountJob wordCountJob;
+    @Autowired
+    private FileSystem fileSystem;
+
     @Test
     public void testMapReduce() throws Exception {
         String fileName = "mapreduce.txt";
@@ -33,25 +40,34 @@ public class MapReduceTest {
 
         String inputHdfsFilePath = path + "/" + fileName;
 
-        String outPutHdfsFile = path + "/result/output.txt" ;
+        String outPutHdfsFile = path + "/result/";
         hdfsService.delete(inputHdfsFilePath, true);
         logger.info("测试环境数据清理完毕");
 
         hdfsService.uploadFile(context.getBytes(StandardCharsets.UTF_8), inputHdfsFilePath, true);
         logger.info("MapReduce 测试文本上传完毕,开始执行 word count job");
 
-        wordCountJob.runJob(inputHdfsFilePath,outPutHdfsFile);
+        wordCountJob.runJob("hdfs://cdh-slave-1:8020" + inputHdfsFilePath, "hdfs://cdh-slave-1:8020" + outPutHdfsFile);
         logger.info("MapReduce 测试job执行完毕");
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        hdfsService.download(outPutHdfsFile,outputStream);
-        logger.info("MapReduce 测试结果下载完毕");
 
-        byte[] bytes = outputStream.toByteArray();
-        logger.info("任务执行完毕，获取结果:{}",new String(bytes, StandardCharsets.UTF_8));
+        List<Path> paths = hdfsService.listFiles(outPutHdfsFile, true);
+        for (Path resultPath : paths) {
+            FileStatus status = fileSystem.getFileStatus(resultPath);
+            if (status.isDirectory()){
+                continue;
+            }
+            if (status.isFile() && !resultPath.getName().startsWith("_SUCCESS")){
+                // 是文件，并且不是成功标识文件
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                hdfsService.download(outPutHdfsFile, outputStream);
+                byte[] bytes = outputStream.toByteArray();
+                logger.info("任务执行完毕，获取结果:{}", new String(bytes, StandardCharsets.UTF_8));
+            }
+        }
 
-        hdfsService.delete(inputHdfsFilePath,true);
-        hdfsService.delete(outPutHdfsFile,true);
+        hdfsService.delete(inputHdfsFilePath, true);
+        hdfsService.delete(outPutHdfsFile, true);
         logger.info("测试结束，清理空间完毕");
 
     }
