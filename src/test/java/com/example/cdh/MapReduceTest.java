@@ -72,8 +72,7 @@ public class MapReduceTest {
             }
         }
 
-        hdfsService.delete(inputHdfsFilePath, true);
-        hdfsService.delete(outPutHdfsFile, true);
+        hdfsService.delete(path, true);
         logger.info("测试结束，清理空间完毕");
 
     }
