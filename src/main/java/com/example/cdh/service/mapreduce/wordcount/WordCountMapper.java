@@ -1,6 +1,7 @@
 package com.example.cdh.service.mapreduce.wordcount;
 
 import java.io.IOException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -19,10 +20,15 @@ public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
         Text value,
         Mapper<LongWritable, Text, Text, IntWritable>.Context context) throws IOException, InterruptedException {
         String line = value.toString();
-        String[] words = line.split(" ");
-        for (String word : words) {
-            outK.set(word);
+        char[] chars = line.toCharArray();
+        for (char aChar : chars) {
+            String str = Character.toString(aChar);
+            if (StringUtils.isBlank(str)){
+                continue;
+            }
+            outK.set(str);
             context.write(outK, outV);
+
         }
     }
 }
