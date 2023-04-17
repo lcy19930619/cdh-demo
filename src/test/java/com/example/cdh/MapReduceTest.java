@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
+import org.apache.commons.io.IOUtils;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -59,10 +61,14 @@ public class MapReduceTest {
             }
             if (status.isFile() && !resultPath.getName().startsWith("_SUCCESS")){
                 // 是文件，并且不是成功标识文件
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                hdfsService.download(outPutHdfsFile, outputStream);
-                byte[] bytes = outputStream.toByteArray();
-                logger.info("任务执行完毕，获取结果:{}", new String(bytes, StandardCharsets.UTF_8));
+
+                try (FSDataInputStream open = fileSystem.open(resultPath);
+                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream()){
+                    IOUtils.copy(open, outputStream);
+                    byte[] bytes = outputStream.toByteArray();
+                    logger.info("任务执行完毕，获取结果:{}", new String(bytes, StandardCharsets.UTF_8));
+                }
+
             }
         }
 
