@@ -18,6 +18,10 @@
     </properties>
     <dependencies>
 
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
         <!-- scala 依赖 开始 -->
         <dependency>
             <groupId>org.scala-lang</groupId>

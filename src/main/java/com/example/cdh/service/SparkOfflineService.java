@@ -3,11 +3,7 @@ package com.example.cdh.service;
 import com.example.cdh.dto.UserDTO;
 import java.io.Serializable;
 import org.apache.spark.api.java.function.MapFunction;
-import org.apache.spark.sql.AnalysisException;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.*;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -73,17 +69,18 @@ public class SparkOfflineService implements Serializable {
             }, Encoders.bean(UserDTO.class));
 
         Dataset<Row> dataset =
-            sql.groupBy(column("name").alias("name"))
-                .agg(count(" * ").as("c"))
+            sql.groupBy(column("age").alias("age"))
+                .agg(count("name").as("c"))
                 .orderBy(desc("c"));
 
         dataset.write()
+                .mode(SaveMode.Overwrite)
             .format("jdbc")
             .option("url", "jdbc:mysql://10.8.0.4/test")
             .option("driver", "com.mysql.jdbc.Driver")
             .option("dbtable", "test")
             .option("user", "root")
-            .option("password", "123456")
+            .option("password", "q")
             .save();
         return sql.count();
     }

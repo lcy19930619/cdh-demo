@@ -35,8 +35,8 @@ public class SparkOfflineTest {
     @Test
     public void filterHdfsCsvLteAgeTest() throws AnalysisException, IOException {
         initHdfsData();
-        long count = sparkOfflineService.filterHdfsCsvLteAge(path, 19);
-        Assert.isTrue(count ==3,"查询的结果应该=3");
+        long count = sparkOfflineService.filterHdfsCsvLteAge(path, 50);
+        Assert.isTrue(count ==5,"查询的结果应该=5");
         cleanup();
     }
 

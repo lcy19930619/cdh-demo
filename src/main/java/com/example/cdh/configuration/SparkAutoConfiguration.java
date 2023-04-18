@@ -60,6 +60,9 @@ public class SparkAutoConfiguration {
                 }
             }
         }
+     //   conf.set("spark.driver.extraClassPath","hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar");
+
+     //   conf.set("spark.executor.extraClassPath","hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar");
         return conf;
     }
 
