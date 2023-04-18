@@ -21,3 +21,8 @@ logging:
             client: WARN
           scheduler:
             cluster: WARN
+hadoop:
+  url: hdfs://cdh-slave-1:8020
+  replication: 3
+  blockSize: 2097152
+  user: root
