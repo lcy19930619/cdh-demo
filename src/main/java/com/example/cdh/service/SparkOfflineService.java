@@ -2,6 +2,7 @@ package com.example.cdh.service;
 
 import com.example.cdh.dto.UserDTO;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
@@ -58,11 +59,13 @@ public class SparkOfflineService implements Serializable {
         JavaRDD<UserDTO> rdd  = sparkSession
             .sql("select * from " + tempTableName + " where age <= " + age)
             .javaRDD()
-            .map(row->{
+            .map(new Function<Row, UserDTO>() {
+                @Override public UserDTO call(Row row) throws Exception {
                     UserDTO dto = new UserDTO();
                     dto.setName(row.getString(0));
                     dto.setAge(row.getInt(1));
                     return dto;
+                }
             });
         rdd.foreach(new VoidFunction<UserDTO>() {
             @Override
