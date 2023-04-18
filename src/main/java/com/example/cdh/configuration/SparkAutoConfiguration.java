@@ -37,7 +37,8 @@ public class SparkAutoConfiguration {
 
         SparkConf conf = new SparkConf()
             .setAppName(sparkProperties.getAppName())
-            .setMaster(sparkProperties.getMasterUrL());
+            .setMaster(sparkProperties.getMasterUrL())
+                .setJars(new String[]{"target/cdh-demo-0.0.1-SNAPSHOT.jar"});
         AbstractEnvironment abstractEnvironment = ((AbstractEnvironment) env);
 
         MutablePropertySources sources = abstractEnvironment.getPropertySources();

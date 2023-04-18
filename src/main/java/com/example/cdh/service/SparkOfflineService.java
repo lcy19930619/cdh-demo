@@ -13,7 +13,9 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import scala.Serializable;
+import java.io.Serializable;
+
+import java.beans.Transient;
 
 /**
  * spark 离线计算
@@ -23,6 +25,8 @@ import scala.Serializable;
  */
 @Component
 public class SparkOfflineService implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Autowired
     private SparkSession sparkSession;
 
@@ -73,6 +77,6 @@ public class SparkOfflineService implements Serializable {
                 System.out.println(dto.getName() + " <====> " +dto.getAge());
             }
         });
-        return csv.count();
+        return rdd.count();
     }
 }
