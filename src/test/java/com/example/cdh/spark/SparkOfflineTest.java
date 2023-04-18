@@ -4,8 +4,9 @@ import com.example.cdh.service.HdfsService;
 import com.example.cdh.service.SparkOfflineService;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.apache.spark.sql.AnalysisException;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
@@ -16,6 +17,7 @@ import org.springframework.util.Assert;
  */
 @SpringBootTest
 public class SparkOfflineTest {
+    private static final Logger logger = LoggerFactory.getLogger(SparkOfflineTest.class);
     @Autowired
     private SparkOfflineService sparkOfflineService;
     @Autowired
@@ -27,18 +29,30 @@ public class SparkOfflineTest {
     public void countHdfsCsvTest() throws IOException {
         initHdfsData();
         long count = sparkOfflineService.countHdfsCsv(path);
-        System.out.println("====>" + count);
-        Assert.isTrue(count>1,"查询的结果应该大于1");
         cleanup();
+        Assert.isTrue(count == 6,"查询的结果应该为6");
+        logger.info("统计测试执行完毕");
     }
 
     @Test
-    public void filterHdfsCsvLteAgeTest() throws AnalysisException, IOException {
+    public void lteTest() throws  IOException {
         initHdfsData();
-        long count = sparkOfflineService.filterHdfsCsvLteAge(path, 50);
-        Assert.isTrue(count ==5,"查询的结果应该=5");
+        long count = sparkOfflineService.lte(path, 19);
         cleanup();
+        Assert.isTrue(count == 3,"查询的结果应该为 3");
+        logger.info("简单条件测试执行完毕");
+
     }
+
+    @Test
+    public void aggTest() throws IOException {
+        initHdfsData();
+        long count = sparkOfflineService.agg(path, 1);
+        cleanup();
+        Assert.isTrue(count == 1,"查询的结果应该为 1");
+        logger.info("聚合测试执行完毕");
+    }
+
 
     private void initHdfsData() throws IOException {
         String data =
