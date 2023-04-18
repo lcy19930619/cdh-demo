@@ -60,8 +60,9 @@ public class SparkAutoConfiguration {
                 }
             }
         }
+     //   也可以通过此方式设置 (方式二)   二选一即可
      //   conf.set("spark.driver.extraClassPath","hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar");
-
+     //   也可以通过此方式设置 (方式三)    二选一即可
      //   conf.set("spark.executor.extraClassPath","hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar");
         return conf;
     }

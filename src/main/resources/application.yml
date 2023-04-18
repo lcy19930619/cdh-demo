@@ -1,11 +1,13 @@
 spark:
   jars:
+    # 当前 JAR 的名字，支持相对路径，如果使用匿名内部类，会生成$1的class，不添加jar，会出现ClassNotFoundException
     - target/cdh-demo-0.0.1-SNAPSHOT.jar
   app-name: cdh-demo
   master-url: spark://cdh-slave-1:7077
   driver:
     memory: 1g
     host: 10.8.0.5
+    # JDBC 驱动地址,手动上传到 hdfs 的
     extraClassPath: hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar
   worker:
     memory: 1g
