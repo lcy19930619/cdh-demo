@@ -5,7 +5,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
@@ -48,23 +48,22 @@ public class SparkOfflineService implements Serializable {
         fields[1] = ageField;
         StructType schema = new StructType(fields);
 
-        Dataset<UserDTO> csv = sparkSession
+        Dataset<Row> csv = sparkSession
             .read()
             .schema(schema)
-            .csv(hdfsPath)
-            .map(row -> {
-                UserDTO dto = new UserDTO();
-                dto.setName(row.getString(0));
-                dto.setAge(row.getInt(1));
-                return dto;
-            }, Encoders.bean(UserDTO.class));
+            .csv(hdfsPath);
 
         csv.createOrReplaceTempView(tempTableName);
 
-        Dataset<UserDTO> sql = sparkSession
+        JavaRDD<UserDTO> rdd  = sparkSession
             .sql("select * from " + tempTableName + " where age <= " + age)
-            .as(Encoders.bean(UserDTO.class));
-        JavaRDD<UserDTO> rdd = sql.toJavaRDD();
+            .javaRDD()
+            .map(row->{
+                    UserDTO dto = new UserDTO();
+                    dto.setName(row.getString(0));
+                    dto.setAge(row.getInt(1));
+                    return dto;
+            });
         rdd.foreach(new VoidFunction<UserDTO>() {
             @Override
             public void call(UserDTO dto) throws Exception {
