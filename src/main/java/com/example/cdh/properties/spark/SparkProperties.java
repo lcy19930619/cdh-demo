@@ -1,6 +1,6 @@
 package com.example.cdh.properties.spark;
 
-
+import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +25,11 @@ public class SparkProperties {
      */
     private String speculation;
 
+    /**
+     * 要运行的jars
+     */
+    private List<String> jars;
+
     public String getAppName() {
         return appName;
     }
@@ -47,5 +52,13 @@ public class SparkProperties {
 
     public void setSpeculation(String speculation) {
         this.speculation = speculation;
+    }
+
+    public List<String> getJars() {
+        return jars;
+    }
+
+    public void setJars(List<String> jars) {
+        this.jars = jars;
     }
 }

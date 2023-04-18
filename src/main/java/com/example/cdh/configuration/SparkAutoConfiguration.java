@@ -1,6 +1,7 @@
 package com.example.cdh.configuration;
 
 import com.example.cdh.properties.spark.SparkProperties;
+import java.util.List;
 import java.util.Map;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -34,11 +35,12 @@ public class SparkAutoConfiguration {
      */
     @Bean
     public SparkConf sparkConf() {
-
+        List<String> jars = sparkProperties.getJars();
+        String[] sparkJars = jars.toArray(new String[0]);
         SparkConf conf = new SparkConf()
             .setAppName(sparkProperties.getAppName())
             .setMaster(sparkProperties.getMasterUrL())
-                .setJars(new String[]{"target/cdh-demo-0.0.1-SNAPSHOT.jar"});
+            .setJars(sparkJars);
         AbstractEnvironment abstractEnvironment = ((AbstractEnvironment) env);
 
         MutablePropertySources sources = abstractEnvironment.getPropertySources();
@@ -48,6 +50,9 @@ public class SparkAutoConfiguration {
                 for (Map.Entry<String, Object> entry : propertyMap.entrySet()) {
                     String key = entry.getKey();
                     if (key.startsWith("spark.")) {
+                        if ("spark.jars".equals(key)){
+                            continue;
+                        }
                         String value = env.getProperty(key);
                         conf.set(key,value);
                         logger.info("已识别 spark 配置属性,{}:{}",key,value);
