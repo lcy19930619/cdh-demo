@@ -1,8 +1,11 @@
 spark:
+  jars:
+    - target/cdh-demo-0.0.1-SNAPSHOT.jar
   app-name: cdh-demo
   master-url: spark://cdh-slave-1:7077
   driver:
     memory: 1g
+    extraClassPath: hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar
   worker:
     memory: 1g
   executor:
