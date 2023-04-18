@@ -1,11 +1,11 @@
 package com.example.cdh.service;
 
 import com.example.cdh.dto.UserDTO;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.VoidFunction;
+import java.io.Serializable;
+import org.apache.spark.api.java.function.MapFunction;
 import org.apache.spark.sql.AnalysisException;
 import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataTypes;
@@ -13,9 +13,10 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.io.Serializable;
 
-import java.beans.Transient;
+import static org.apache.spark.sql.functions.column;
+import static org.apache.spark.sql.functions.count;
+import static org.apache.spark.sql.functions.desc;
 
 /**
  * spark 离线计算
@@ -59,24 +60,31 @@ public class SparkOfflineService implements Serializable {
             .csv(hdfsPath);
 
         csv.createOrReplaceTempView(tempTableName);
-
-        JavaRDD<UserDTO> rdd  = sparkSession
+        Dataset<UserDTO> sql = sparkSession
             .sql("select * from " + tempTableName + " where age <= " + age)
-            .javaRDD()
-            .map(new Function<Row, UserDTO>() {
-                @Override public UserDTO call(Row row) throws Exception {
+            .map(new MapFunction<Row, UserDTO>() {
+                @Override
+                public UserDTO call(Row row) throws Exception {
                     UserDTO dto = new UserDTO();
                     dto.setName(row.getString(0));
                     dto.setAge(row.getInt(1));
                     return dto;
                 }
-            });
-        rdd.foreach(new VoidFunction<UserDTO>() {
-            @Override
-            public void call(UserDTO dto) throws Exception {
-                System.out.println(dto.getName() + " <====> " +dto.getAge());
-            }
-        });
-        return rdd.count();
+            }, Encoders.bean(UserDTO.class));
+
+        Dataset<Row> dataset =
+            sql.groupBy(column("name").alias("name"))
+                .agg(count(" * ").as("c"))
+                .orderBy(desc("c"));
+
+        dataset.write()
+            .format("jdbc")
+            .option("url", "jdbc:mysql://10.8.0.4/test")
+            .option("driver", "com.mysql.jdbc.Driver")
+            .option("dbtable", "test")
+            .option("user", "root")
+            .option("password", "123456")
+            .save();
+        return sql.count();
     }
 }

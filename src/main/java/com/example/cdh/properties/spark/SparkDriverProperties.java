@@ -40,6 +40,12 @@ public class SparkDriverProperties {
      */
     private String port;
 
+    /**
+     * 其他的类加载路径
+     * <br>
+     * 在多个 Jar 包之间的分隔符默认是冒号 :
+     */
+    private String extraClassPath;
 
     private BlockManager blockManager;
 
@@ -117,5 +123,13 @@ public class SparkDriverProperties {
 
     public void setMaxResultSize(String maxResultSize) {
         this.maxResultSize = maxResultSize;
+    }
+
+    public String getExtraClassPath() {
+        return extraClassPath;
+    }
+
+    public void setExtraClassPath(String extraClassPath) {
+        this.extraClassPath = extraClassPath;
     }
 }

@@ -6,6 +6,7 @@ spark:
   driver:
     memory: 1g
     host: 10.8.0.5
+    extraClassPath: hdfs://cdh-slave-1:8020/jars/mysql-connector-java-5.1.47.jar
   worker:
     memory: 1g
   executor:
