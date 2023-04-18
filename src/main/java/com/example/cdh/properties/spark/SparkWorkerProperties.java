@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,18 +15,18 @@ public class SparkWorkerProperties {
      * <br/>
      * thriftserver是启动thriftserver服务的机器，资源充足的话可以尽量给多。
      */
-    private Integer cpuCores = 1;
+    private String cpuCores = "1";
 
     /**
      * worker端分配的内存数，默认为1GB，
      */
     private String memory = "1G";
 
-    public Integer getCpuCores() {
+    public String getCpuCores() {
         return cpuCores;
     }
 
-    public void setCpuCores(Integer cpuCores) {
+    public void setCpuCores(String cpuCores) {
         this.cpuCores = cpuCores;
     }
 

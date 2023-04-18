@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,29 +13,29 @@ public class SparkSchedulingProperties {
     /**
      * 在执行前最大等待申请资源的时间，默认30s。
      */
-    private Integer maxRegisteredResourcesWaitingTime;
+    private String maxRegisteredResourcesWaitingTime;
     /**
      * 实际注册的资源数占预期需要的资源数的比例，默认0.8
      */
-    private Float minRegisteredResourcesRatio;
+    private String minRegisteredResourcesRatio;
     /**
      * 调度模式，默认FIFO 先进队列先调度，可以选择FAIR。
      */
     private String mode;
 
-    public Integer getMaxRegisteredResourcesWaitingTime() {
+    public String getMaxRegisteredResourcesWaitingTime() {
         return maxRegisteredResourcesWaitingTime;
     }
 
-    public void setMaxRegisteredResourcesWaitingTime(Integer maxRegisteredResourcesWaitingTime) {
+    public void setMaxRegisteredResourcesWaitingTime(String maxRegisteredResourcesWaitingTime) {
         this.maxRegisteredResourcesWaitingTime = maxRegisteredResourcesWaitingTime;
     }
 
-    public Float getMinRegisteredResourcesRatio() {
+    public String getMinRegisteredResourcesRatio() {
         return minRegisteredResourcesRatio;
     }
 
-    public void setMinRegisteredResourcesRatio(Float minRegisteredResourcesRatio) {
+    public void setMinRegisteredResourcesRatio(String minRegisteredResourcesRatio) {
         this.minRegisteredResourcesRatio = minRegisteredResourcesRatio;
     }
 

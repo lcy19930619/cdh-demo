@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ public class SparkShuffleProperties {
     /**
      * 是否压缩map输出文件，默认压缩 true
      */
-    private Boolean compress;
+    private String compress;
 
     /**
      * 该参数代表了Executor内存中，分配给shuffle read task进行聚合操作的内存比例，默认是20%。
@@ -32,13 +32,45 @@ public class SparkShuffleProperties {
      * <p>
      * 如果的确不需要SortShuffleManager的排序机制，那么除了使用bypass机制，还可以尝试将spark.shuffle.manager参数手动指定为hash，使用HashShuffleManager，同时开启consolidate机制。
      */
-    private Boolean consolidateFiles;
+    private String consolidateFiles;
 
     private Spill spill;
 
     private File file;
 
     private Io io;
+
+    public String getCompress() {
+        return compress;
+    }
+
+    public void setCompress(String compress) {
+        this.compress = compress;
+    }
+
+    public String getMemoryFraction() {
+        return memoryFraction;
+    }
+
+    public void setMemoryFraction(String memoryFraction) {
+        this.memoryFraction = memoryFraction;
+    }
+
+    public String getManager() {
+        return manager;
+    }
+
+    public void setManager(String manager) {
+        this.manager = manager;
+    }
+
+    public String getConsolidateFiles() {
+        return consolidateFiles;
+    }
+
+    public void setConsolidateFiles(String consolidateFiles) {
+        this.consolidateFiles = consolidateFiles;
+    }
 
     public Spill getSpill() {
         return spill;
@@ -64,49 +96,17 @@ public class SparkShuffleProperties {
         this.io = io;
     }
 
-    public Boolean getCompress() {
-        return compress;
-    }
-
-    public void setCompress(Boolean compress) {
-        this.compress = compress;
-    }
-
-    public String getMemoryFraction() {
-        return memoryFraction;
-    }
-
-    public void setMemoryFraction(String memoryFraction) {
-        this.memoryFraction = memoryFraction;
-    }
-
-    public String getManager() {
-        return manager;
-    }
-
-    public void setManager(String manager) {
-        this.manager = manager;
-    }
-
-    public Boolean getConsolidateFiles() {
-        return consolidateFiles;
-    }
-
-    public void setConsolidateFiles(Boolean consolidateFiles) {
-        this.consolidateFiles = consolidateFiles;
-    }
-
     static class Spill {
         /**
          * shuffle过程中溢出的文件是否压缩，默认true，使用spark.io.compression.codec压缩。
          */
-        private Boolean compress;
+        private String compress;
 
-        public Boolean getCompress() {
+        public String getCompress() {
             return compress;
         }
 
-        public void setCompress(Boolean compress) {
+        public void setCompress(String compress) {
             this.compress = compress;
         }
     }
@@ -115,13 +115,13 @@ public class SparkShuffleProperties {
         /**
          * 在内存输出流中 每个shuffle文件占用内存大小，适当提高 可以减少磁盘读写 io次数，初始值为32k
          */
-        private Long buffer;
+        private String buffer;
 
-        public Long getBuffer() {
+        public String getBuffer() {
             return buffer;
         }
 
-        public void setBuffer(Long buffer) {
+        public void setBuffer(String buffer) {
             this.buffer = buffer;
         }
     }
@@ -132,25 +132,25 @@ public class SparkShuffleProperties {
          * <p>
          * 对于那些包含了特别耗时的shuffle操作的作业，建议增加重试最大次数（比如60次），以避免由于JVM的full gc或者网络不稳定等因素导致的数据拉取失败。在实践中发现，对于针对超大数据量（数十亿~上百亿）的shuffle过程，调节该参数可以大幅度提升稳定性。
          */
-        private Integer maxRetries;
+        private String maxRetries;
         /**
          * 默认5s，建议加大间隔时长（比如60s），以增加shuffle操作的稳定性
          */
-        private Integer retryWait;
+        private String retryWait;
 
-        public Integer getMaxRetries() {
+        public String getMaxRetries() {
             return maxRetries;
         }
 
-        public void setMaxRetries(Integer maxRetries) {
+        public void setMaxRetries(String maxRetries) {
             this.maxRetries = maxRetries;
         }
 
-        public Integer getRetryWait() {
+        public String getRetryWait() {
             return retryWait;
         }
 
-        public void setRetryWait(Integer retryWait) {
+        public void setRetryWait(String retryWait) {
             this.retryWait = retryWait;
         }
     }

@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,16 +15,16 @@ public class SparkRpcProperties {
     /**
      * rpc任务在放弃之前的重试次数，默认3，即rpc task最多会执行3次。
      */
-    private Integer numRetries;
+    private String numRetries;
     /**
      * rpc任务超时时间，默认spark.network.timeout
      */
-    private Integer askTimeout;
+    private String askTimeout;
 
     /**
      * rpc任务查找时长
      */
-    private Integer lookupTimeout;
+    private String lookupTimeout;
 
     public Message getMessage() {
         return message;
@@ -34,27 +34,27 @@ public class SparkRpcProperties {
         this.message = message;
     }
 
-    public Integer getNumRetries() {
+    public String getNumRetries() {
         return numRetries;
     }
 
-    public void setNumRetries(Integer numRetries) {
+    public void setNumRetries(String numRetries) {
         this.numRetries = numRetries;
     }
 
-    public Integer getAskTimeout() {
+    public String getAskTimeout() {
         return askTimeout;
     }
 
-    public void setAskTimeout(Integer askTimeout) {
+    public void setAskTimeout(String askTimeout) {
         this.askTimeout = askTimeout;
     }
 
-    public Integer getLookupTimeout() {
+    public String getLookupTimeout() {
         return lookupTimeout;
     }
 
-    public void setLookupTimeout(Integer lookupTimeout) {
+    public void setLookupTimeout(String lookupTimeout) {
         this.lookupTimeout = lookupTimeout;
     }
 

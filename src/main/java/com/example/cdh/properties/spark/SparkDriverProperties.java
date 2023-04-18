@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class SparkDriverProperties {
      * <br/>
      * thriftserver是启动thriftserver服务的机器，资源充足的话可以尽量给多。
      */
-    private Integer cpuCores = 1;
+    private String cpuCores = "1";
 
     /**
      * driver端分配的内存数，默认为1GB，
@@ -31,13 +31,14 @@ public class SparkDriverProperties {
 
     /**
      * driver端的ip
+     * spark 会通过此地址于driver进行通讯，也就是说，如果这个地址不能被spark访问的话，调度是会失败的
      */
     private String host;
 
     /**
      * driver端端口。
      */
-    private Integer port;
+    private String port;
 
 
     private BlockManager blockManager;
@@ -50,13 +51,6 @@ public class SparkDriverProperties {
         this.host = host;
     }
 
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
 
     public BlockManager getBlockManager() {
         return blockManager;
@@ -70,17 +64,17 @@ public class SparkDriverProperties {
         /**
          * driver端绑定监听block manager的端口。
          */
-        private Integer port;
+        private String port;
         /**
          * driver端绑定监听block manager的地址
          */
         private String address;
 
-        public Integer getPort() {
+        public String getPort() {
             return port;
         }
 
-        public void setPort(Integer port) {
+        public void setPort(String port) {
             this.port = port;
         }
 
@@ -92,12 +86,21 @@ public class SparkDriverProperties {
             this.address = address;
         }
     }
-    public Integer getCpuCores() {
+
+    public String getCpuCores() {
         return cpuCores;
     }
 
-    public void setCpuCores(Integer cpuCores) {
+    public void setCpuCores(String cpuCores) {
         this.cpuCores = cpuCores;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
     }
 
     public String getMemory() {

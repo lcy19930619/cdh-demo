@@ -1,63 +1,32 @@
 package com.example.cdh.configuration;
 
-import com.example.cdh.properties.SparkBroadcastProperties;
-import com.example.cdh.properties.SparkDefaultProperties;
-import com.example.cdh.properties.SparkDriverProperties;
-import com.example.cdh.properties.SparkExecutorProperties;
-import com.example.cdh.properties.SparkFilesProperties;
-import com.example.cdh.properties.SparkMemoryProperties;
-import com.example.cdh.properties.SparkProperties;
-import com.example.cdh.properties.SparkReducerProperties;
-import com.example.cdh.properties.SparkRpcProperties;
-import com.example.cdh.properties.SparkSchedulingProperties;
-import com.example.cdh.properties.SparkShuffleProperties;
-import com.example.cdh.properties.SparkStoreProperties;
-import com.example.cdh.properties.SparkStreamingProperties;
-import com.example.cdh.properties.SparkWorkerProperties;
+import com.example.cdh.properties.spark.SparkProperties;
+import java.util.Map;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MapPropertySource;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 
 /**
  * @author lcy
  */
 @Configuration
 public class SparkAutoConfiguration {
-
+    private static final Logger logger = LoggerFactory.getLogger(SparkAutoConfiguration.class);
     @Autowired
     private SparkProperties sparkProperties;
     @Autowired
-    private SparkBroadcastProperties sparkBroadcastProperties;
-    @Autowired
-    private SparkDefaultProperties sparkDefaultProperties;
-    @Autowired
-    private SparkDriverProperties sparkDriverProperties;
-    @Autowired
-    private SparkExecutorProperties sparkExecutorProperties;
-    @Autowired
-    private SparkFilesProperties sparkFilesProperties;
-    @Autowired
-    private SparkMemoryProperties sparkMemoryProperties;
-    @Autowired
-    private SparkReducerProperties sparkReducerProperties;
-    @Autowired
-    private SparkRpcProperties sparkRpcProperties;
-    @Autowired
-    private SparkSchedulingProperties schedulingProperties;
-    @Autowired
-    private SparkShuffleProperties sparkShuffleProperties;
-    @Autowired
-    private SparkStoreProperties sparkStoreProperties;
-    @Autowired
-    private SparkStreamingProperties sparkStreamingProperties;
-    @Autowired
-    private SparkWorkerProperties sparkWorkerProperties;
-
+    private Environment env;
     /**
      * spark 的基本配置
      *
@@ -66,17 +35,26 @@ public class SparkAutoConfiguration {
     @Bean
     public SparkConf sparkConf() {
 
-
-        return new SparkConf()
+        SparkConf conf = new SparkConf()
             .setAppName(sparkProperties.getAppName())
-            .setMaster(sparkProperties.getMasterUrL())
-            // spark 会通过此地址于driver进行通讯，也就是说，如果这个地址不能被spark访问的话，调度是会失败的
-            // host 就是你本机的ip地址
-            .set("spark.driver.host", "10.8.0.5")
-            .set("spark.driver.memory", sparkDriverProperties.getMemory())
-            .set("spark.worker.memory", sparkWorkerProperties.getMemory())
-            .set("spark.executor.memory", sparkExecutorProperties.getMemory())
-            ;
+            .setMaster(sparkProperties.getMasterUrL());
+        AbstractEnvironment abstractEnvironment = ((AbstractEnvironment) env);
+
+        MutablePropertySources sources = abstractEnvironment.getPropertySources();
+        for (PropertySource<?> source : sources) {
+            if (source instanceof MapPropertySource) {
+                Map<String, Object> propertyMap = ((MapPropertySource) source).getSource();
+                for (Map.Entry<String, Object> entry : propertyMap.entrySet()) {
+                    String key = entry.getKey();
+                    if (key.startsWith("spark.")) {
+                        String value = env.getProperty(key);
+                        conf.set(key,value);
+                        logger.info("已识别 spark 配置属性,{}:{}",key,value);
+                    }
+                }
+            }
+        }
+        return conf;
     }
 
     /**

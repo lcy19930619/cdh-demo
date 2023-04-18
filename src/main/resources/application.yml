@@ -3,6 +3,7 @@ spark:
   master-url: spark://cdh-slave-1:7077
   driver:
     memory: 1g
+    host: 10.8.0.5
   worker:
     memory: 1g
   executor:

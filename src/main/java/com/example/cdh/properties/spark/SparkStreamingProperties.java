@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -14,15 +14,15 @@ public class SparkStreamingProperties {
     /**
      * 确保在kill任务时，能够处理完最后一批数据，再关闭程序，不会发生强制kill导致数据处理中断，没处理完的数据丢失
      */
-    private Boolean stopGracefullyOnShutdown;
+    private String stopGracefullyOnShutdown;
 
     private BackPressure backpressure;
 
-    public Boolean getStopGracefullyOnShutdown() {
+    public String getStopGracefullyOnShutdown() {
         return stopGracefullyOnShutdown;
     }
 
-    public void setStopGracefullyOnShutdown(Boolean stopGracefullyOnShutdown) {
+    public void setStopGracefullyOnShutdown(String stopGracefullyOnShutdown) {
         this.stopGracefullyOnShutdown = stopGracefullyOnShutdown;
     }
 
@@ -38,27 +38,27 @@ public class SparkStreamingProperties {
         /**
          * 开启后spark自动根据系统负载选择最优消费速率
          */
-        private Boolean enabled;
+        private String enabled;
         /**
          * 默认直接读取所有
          * <p>
          * 在开启反压的情况下，限制第一次批处理应该消费的数据，因为程序冷启动队列里面有大量积压，防止第一次全部读取，造成系统阻塞
          */
-        private Integer initialRate;
+        private String initialRate;
 
-        public Boolean getEnabled() {
+        public String getEnabled() {
             return enabled;
         }
 
-        public void setEnabled(Boolean enabled) {
+        public void setEnabled(String enabled) {
             this.enabled = enabled;
         }
 
-        public Integer getInitialRate() {
+        public String getInitialRate() {
             return initialRate;
         }
 
-        public void setInitialRate(Integer initialRate) {
+        public void setInitialRate(String initialRate) {
             this.initialRate = initialRate;
         }
     }
@@ -69,13 +69,13 @@ public class SparkStreamingProperties {
          *
          * 限制每秒每个消费线程读取每个kafka分区最大的数据量
          */
-        private Integer maxRatePerPartition;
+        private String maxRatePerPartition;
 
-        public Integer getMaxRatePerPartition() {
+        public String getMaxRatePerPartition() {
             return maxRatePerPartition;
         }
 
-        public void setMaxRatePerPartition(Integer maxRatePerPartition) {
+        public void setMaxRatePerPartition(String maxRatePerPartition) {
             this.maxRatePerPartition = maxRatePerPartition;
         }
     }

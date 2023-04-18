@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ public class SparkExecutorProperties {
     /**
      * 每个executor的核数，默认yarn下1核，standalone下为所有可用的核。
      */
-    private Integer cpuCores = 1;
+    private String cpuCores = "1";
 
     /**
      * 每个executor分配的内存数，默认1g，会受到yarn CDH的限制，和memoryOverhead相加 不能超过总内存限制。
@@ -23,13 +23,13 @@ public class SparkExecutorProperties {
     /**
      * executor和driver心跳发送间隔，默认10s，必须远远小于spark.network.timeout
      */
-    private Integer heartbeatInterval;
+    private String heartbeatInterval;
 
-    public Integer getCpuCores() {
+    public String getCpuCores() {
         return cpuCores;
     }
 
-    public void setCpuCores(Integer cpuCores) {
+    public void setCpuCores(String cpuCores) {
         this.cpuCores = cpuCores;
     }
 
@@ -41,11 +41,11 @@ public class SparkExecutorProperties {
         this.memory = memory;
     }
 
-    public Integer getHeartbeatInterval() {
+    public String getHeartbeatInterval() {
         return heartbeatInterval;
     }
 
-    public void setHeartbeatInterval(Integer heartbeatInterval) {
+    public void setHeartbeatInterval(String heartbeatInterval) {
         this.heartbeatInterval = heartbeatInterval;
     }
 }

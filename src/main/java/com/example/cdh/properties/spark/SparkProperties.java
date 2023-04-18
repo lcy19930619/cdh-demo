@@ -1,4 +1,4 @@
-package com.example.cdh.properties;
+package com.example.cdh.properties.spark;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,7 +23,7 @@ public class SparkProperties {
     /**
      * 如果有task执行的慢了，就会重新执行它。默认false，
      */
-    private Boolean speculation;
+    private String speculation;
 
     public String getAppName() {
         return appName;
@@ -41,11 +41,11 @@ public class SparkProperties {
         this.masterUrL = masterUrL;
     }
 
-    public Boolean getSpeculation() {
+    public String getSpeculation() {
         return speculation;
     }
 
-    public void setSpeculation(Boolean speculation) {
+    public void setSpeculation(String speculation) {
         this.speculation = speculation;
     }
 }

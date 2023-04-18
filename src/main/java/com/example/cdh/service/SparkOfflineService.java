@@ -56,7 +56,7 @@ public class SparkOfflineService implements Serializable {
         JavaRDD<Row> rdd = sql.toJavaRDD();
         rdd.foreach(new VoidFunction<Row>() {
             @Override public void call(Row row) throws Exception {
-                System.out.println(row.toString());
+                System.out.println(row.getString(0));
             }
         });
         return csv.count();
