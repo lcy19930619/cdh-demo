@@ -11,6 +11,8 @@ import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,7 @@ import static org.apache.spark.sql.functions.count;
  */
 @Component
 public class SparkOfflineService implements Serializable {
+    private static final Logger logger = LoggerFactory.getLogger(SparkOfflineService.class);
     private static final long serialVersionUID = 1L;
 
     @Autowired
@@ -133,9 +136,15 @@ public class SparkOfflineService implements Serializable {
                 .map(new MapFunction<Row, UserDTO>() {
                     @Override
                     public UserDTO call(Row row) throws Exception {
+
+
                         UserDTO dto = new UserDTO();
-                        dto.setName(row.getString(0));
-                        dto.setAge(row.getInt(1));
+                        if (!row.isNullAt(0)){
+                            dto.setName(row.getString(0));
+                        }
+                        if (!row.isNullAt(1)) {
+                            dto.setAge(row.getInt(1));
+                        }
                         return dto;
                     }
                 }, Encoders.bean(UserDTO.class));
