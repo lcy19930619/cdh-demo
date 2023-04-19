@@ -29,3 +29,27 @@ hadoop:
   replication: 3
   blockSize: 2097152
   user: root
+
+spring:
+  kafka:
+    bootstrap-servers: cdh-slave-2:9092
+    producer:
+      acks: 1
+      retries: 10
+      # 32mb
+      buffer-memory: 33554432
+      # 1mb
+      batch-size: 1048576
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    template:
+      # 默认topic
+      default-topic: spark-streaming
+    consumer:
+      group-id: my-group  # 指定消费者组 ID，如果不指定，会随机生产新的
+      auto-offset-reset: earliest  # 指定从哪里开始消费，可选值为 earliest 或 latest
+      max-poll-records: 500  # 最大拉取的消息数量
+      enable-auto-commit: false  # 是否自动提交消费位移
+      max-poll-interval-ms: 30000  # 每次拉取消息的最大时间间隔
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer  # 指定 key 的反序列化器
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer  # 指定 value 的反序列化器

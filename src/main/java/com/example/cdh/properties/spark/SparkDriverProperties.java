@@ -47,6 +47,20 @@ public class SparkDriverProperties {
      */
     private String extraClassPath;
 
+    /**
+     * 允许同一个 JVM 中存在多个上下文，默认值 false
+     * 在同一个 JVM 中创建多个 SparkContext 对象可能会导致以下问题：
+     * <p>
+     * 内存占用过高：SparkContext 对象是一个重量级对象，它需要占用大量内存来维护 Spark 应用程序的状态，并且会创建很多线程来处理不同的任务。如果在同一个 JVM 中创建多个 SparkContext 对象，可能会导致内存占用过高，从而导致系统出现 OOM （内存溢出）等问题。
+     * <p>
+     * 对性能的影响：多个 SparkContext 对象在同一个 JVM 中并发运行可能会导致它们之间的竞争和干扰。例如，多个 SparkContext 对象可能会争夺同一个 CPU 核心和内存资源，进而导致性能下降。
+     * <p>
+     * 避免混淆：多个 SparkContext 对象的存在可能会导致混淆。例如，应用程序可能会使用错误的 SparkContext 对象来访问 RDD 或 DataFrame，从而导致运行时错误。
+     * <p>
+     * 因此，为了避免上述问题，并确保 Spark 应用程序的正确运行，同一个 JVM 中应该只创建一个 SparkContext 对象。
+     */
+    private String allowMultipleContexts;
+
     private BlockManager blockManager;
 
     public String getHost() {
@@ -57,7 +71,6 @@ public class SparkDriverProperties {
         this.host = host;
     }
 
-
     public BlockManager getBlockManager() {
         return blockManager;
     }
@@ -66,7 +79,7 @@ public class SparkDriverProperties {
         this.blockManager = blockManager;
     }
 
-    static class BlockManager{
+    static class BlockManager {
         /**
          * driver端绑定监听block manager的端口。
          */
@@ -131,5 +144,13 @@ public class SparkDriverProperties {
 
     public void setExtraClassPath(String extraClassPath) {
         this.extraClassPath = extraClassPath;
+    }
+
+    public String getAllowMultipleContexts() {
+        return allowMultipleContexts;
+    }
+
+    public void setAllowMultipleContexts(String allowMultipleContexts) {
+        this.allowMultipleContexts = allowMultipleContexts;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.cdh.spark;
 
-import com.example.cdh.service.HdfsService;
-import com.example.cdh.service.SparkOfflineService;
+import com.example.cdh.service.hadoop.HdfsService;
+import com.example.cdh.service.spark.SparkOfflineService;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;

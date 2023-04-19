@@ -1,6 +1,6 @@
 package com.example.cdh;
 
-import com.example.cdh.service.HdfsService;
+import com.example.cdh.service.hadoop.HdfsService;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;

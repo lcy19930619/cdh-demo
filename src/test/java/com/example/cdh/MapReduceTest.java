@@ -1,6 +1,6 @@
 package com.example.cdh;
 
-import com.example.cdh.service.HdfsService;
+import com.example.cdh.service.hadoop.HdfsService;
 import com.example.cdh.service.mapreduce.WordCountJob;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
