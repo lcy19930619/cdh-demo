@@ -139,7 +139,7 @@ public class SparkAutoConfiguration {
         if (Objects.nonNull(kafka) && kafka.getTopics() != null){
             topics = kafka.getTopics();
         }
-
+        logger.info("streaming topic:{}",String.join(",",topics));
         return KafkaUtils.<Key,Value>createDirectStream(
             javaStreamingContext,
             LocationStrategies.PreferConsistent(),

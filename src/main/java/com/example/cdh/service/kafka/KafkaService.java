@@ -30,7 +30,7 @@ public class KafkaService {
         commonThreadPool.execute(()->{
             RateLimiter limiter = RateLimiter.create(qps);
             for (String datum : data) {
-                kafkaTemplate.send(topic,datum);
+                kafkaTemplate.send(topic,"key",datum);
                 limiter.acquire();
             }
         });
