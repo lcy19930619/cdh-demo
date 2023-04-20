@@ -23,8 +23,6 @@ import org.apache.spark.streaming.kafka010.LocationStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -92,20 +90,9 @@ public class SparkAutoConfiguration {
      * @param sparkConf
      * @return
      */
-    @Bean("javaSparkContext")
-    @ConditionalOnMissingClass("org.apache.spark.streaming.api.java.JavaStreamingContext")
+    @Bean
     public JavaSparkContext javaSparkContext(SparkConf sparkConf) {
         return new JavaSparkContext(sparkConf);
-    }
-
-    /**
-     * 如果有实时流测试环境，使用实时流上下文
-     * @param javaStreamingContext
-     * @return
-     */
-    @Bean("javaSparkContext")
-    public JavaSparkContext javaStreamingContext(JavaStreamingContext javaStreamingContext){
-        return javaStreamingContext.sparkContext();
     }
 
     /**
@@ -114,7 +101,7 @@ public class SparkAutoConfiguration {
      * @return
      */
     @Bean
-    public SparkSession sparkSession(@Qualifier("javaSparkContext") JavaSparkContext javaSparkContext) {
+    public SparkSession sparkSession( JavaSparkContext javaSparkContext) {
         return SparkSession
             .builder()
             .sparkContext(javaSparkContext.sc())
@@ -124,14 +111,14 @@ public class SparkAutoConfiguration {
 
     
     @Bean
-    public JavaStreamingContext javaStreamingContext(SparkConf sparkConf,
+    public JavaStreamingContext javaStreamingContext(JavaSparkContext javaSparkContext,
         SparkStreamingProperties streamingProperties){
         String duration = streamingProperties.getDuration();
         if (StringUtils.isBlank(duration) || !StringUtils.isNumeric(duration)){
             duration = "5";
             logger.warn("spark.streaming.duration 配置参数不符合要求，已使用默认值5，当前配置参数:{}",duration);
         }
-        return new JavaStreamingContext(sparkConf, Durations.seconds(Integer.parseInt(duration)));
+        return new JavaStreamingContext(javaSparkContext, Durations.seconds(Integer.parseInt(duration)));
     }
 
     @Bean
