@@ -13,7 +13,10 @@ spark:
   rpc:
     message:
       maxSize: 1024
-
+  streaming:
+    kafka:
+      topics:
+        - spark-streaming-demo
 logging:
   level:
     org:

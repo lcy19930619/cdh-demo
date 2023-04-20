@@ -14,8 +14,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
@@ -23,17 +23,18 @@ import org.apache.spark.streaming.kafka010.LocationStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import scala.Tuple2;
 
 /**
  * @author lcy
@@ -113,7 +114,7 @@ public class SparkAutoConfiguration {
      * @return
      */
     @Bean
-    public SparkSession sparkSession(JavaSparkContext javaSparkContext) {
+    public SparkSession sparkSession(@Qualifier("javaSparkContext") JavaSparkContext javaSparkContext) {
         return SparkSession
             .builder()
             .sparkContext(javaSparkContext.sc())
@@ -134,8 +135,7 @@ public class SparkAutoConfiguration {
     }
 
     @Bean
-    @DependsOn("javaStreamingContext")
-    public <Input,Output> JavaInputDStream<ConsumerRecord<Input, Output>> kafkaReceiverStream(
+    public <Key,Value> JavaInputDStream<ConsumerRecord<Key,Value>> kafkaReceiverStream(
         JavaStreamingContext javaStreamingContext,
         KafkaProperties kafkaProperties,
         SparkStreamingProperties streamingProperties) {
@@ -153,15 +153,17 @@ public class SparkAutoConfiguration {
             topics = kafka.getTopics();
         }
 
-        return KafkaUtils.<Input,Output>createDirectStream(
+        return KafkaUtils.<Key,Value>createDirectStream(
             javaStreamingContext,
             LocationStrategies.PreferConsistent(),
-            ConsumerStrategies.Subscribe(topics, kafkaParams));
+            ConsumerStrategies.<Key,Value>Subscribe(topics, kafkaParams));
     }
 
 
     @Bean
-    public <Input,Output> JavaDStream javaDStream(JavaInputDStream<ConsumerRecord<Input,Output>> kafkaReceiverStream){
-        return null;
+    public <Key,Value> JavaPairDStream<Key,Value> javaDStream(JavaInputDStream<ConsumerRecord<Key,Value>> kafkaReceiverStream){
+        return kafkaReceiverStream.mapToPair(record -> new Tuple2<>(record.key(), record.value()));
     }
+
+
 }

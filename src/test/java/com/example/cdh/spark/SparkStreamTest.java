@@ -1,8 +1,10 @@
 package com.example.cdh.spark;
 
+import com.example.cdh.properties.spark.SparkStreamingProperties;
 import com.example.cdh.service.spark.SparkStreamService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +19,19 @@ public class SparkStreamTest {
 
     @Autowired
     private SparkStreamService sparkStreamService;
-
+    @Autowired
+    private SparkStreamingProperties streamingProperties;
     @Test
     public void mockPublisherTest() throws InterruptedException {
-        List<String> list = new ArrayList<String>();
-        for (int i = 0; i < 1; i++) {
-            list.add(UUID.randomUUID().toString());
-        }
-        sparkStreamService.mockProduce("test",list,30d);
-        Thread.sleep(2000);
+
+        Set<String> topics = streamingProperties.getKafka().getTopics();
+        topics.parallelStream().forEach(topic->{
+            List<String> list = new ArrayList<String>();
+            for (int i = 0; i < 1000; i++) {
+                list.add(UUID.randomUUID().toString());
+            }
+            sparkStreamService.mockProduce(topic,list,999999);
+        });
+        Thread.sleep(20000);
     }
 }
