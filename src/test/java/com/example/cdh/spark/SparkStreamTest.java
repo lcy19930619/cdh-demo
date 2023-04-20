@@ -1,6 +1,7 @@
 package com.example.cdh.spark;
 
 import com.example.cdh.properties.spark.SparkStreamingProperties;
+import com.example.cdh.service.kafka.KafkaService;
 import com.example.cdh.service.spark.SparkStreamService;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public class SparkStreamTest {
     private SparkStreamService sparkStreamService;
     @Autowired
     private SparkStreamingProperties streamingProperties;
+    @Autowired
+    private KafkaService kafkaService;
     @Test
     public void mockPublisherTest() throws InterruptedException {
 
@@ -30,7 +33,7 @@ public class SparkStreamTest {
             for (int i = 0; i < 1000; i++) {
                 list.add(UUID.randomUUID().toString());
             }
-            sparkStreamService.mockProduce(topic,list,999999);
+            kafkaService.mockProduce(topic,list,999999);
         });
         Thread.sleep(20000);
     }
